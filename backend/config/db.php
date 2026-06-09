@@ -1,13 +1,18 @@
 <?php
 
-// LOCALHOST
-if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
+$isLocal = (
+    $_SERVER['HTTP_HOST'] === 'localhost' ||
+    $_SERVER['HTTP_HOST'] === '127.0.0.1'
+);
 
+if ($isLocal) {
+
+    // LOCALHOST (XAMPP)
     $conn = new mysqli("localhost", "root", "", "hireiq");
 
 } else {
 
-    // PRODUCTION (Render ENV VARIABLES)
+    // RENDER (MySQL via ENV)
     $conn = new mysqli(
         getenv("DB_HOST"),
         getenv("DB_USER"),
@@ -19,7 +24,7 @@ if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.
 if ($conn->connect_error) {
     die(json_encode([
         "status" => "error",
-        "message" => "DB connection failed"
+        "message" => "DB connection failed: " . $conn->connect_error
     ]));
 }
 
