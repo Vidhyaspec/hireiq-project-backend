@@ -1,13 +1,11 @@
 FROM php:8.2-apache
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Enable required Apache modules
+RUN a2enmod rewrite headers
 
-# Copy project files
+# Copy project correctly
 COPY . /var/www/html/
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Permissions
 RUN chown -R www-data:www-data /var/www/html

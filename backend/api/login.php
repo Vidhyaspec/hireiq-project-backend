@@ -1,23 +1,11 @@
 <?php
-
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Content-Type: application/json");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
-include "../config/db.php";
-
-// ✅ SAFE INPUT (FOR FORM DATA)
-$email = $_POST['email'] ?? '';
-$password = $_POST['password'] ?? '';
-
-// ❌ VALIDATION
-if (!$email || !$password) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "No data received"
-    ]);
-    exit;
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
 }
 
 // GET USER
