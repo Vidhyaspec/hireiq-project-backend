@@ -1,17 +1,18 @@
 <?php
 
-$isLocal = ($_SERVER['HTTP_HOST'] === 'localhost');
+// LOCALHOST
+if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
 
-if ($isLocal) {
-    // LOCALHOST
     $conn = new mysqli("localhost", "root", "", "hireiq");
+
 } else {
-    // LIVE SERVER (Render)
+
+    // PRODUCTION (Render ENV VARIABLES)
     $conn = new mysqli(
-        "sql112.infinityfree.com",
-        "if0_42125722",
-        "VidhyaMahi",
-        "if0_42125722_hireiq"
+        getenv("DB_HOST"),
+        getenv("DB_USER"),
+        getenv("DB_PASS"),
+        getenv("DB_NAME")
     );
 }
 
