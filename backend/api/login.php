@@ -1,14 +1,41 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
+// FIX: correct DB include
+include "../config/db.php";
+
+// FIX: safe input handling
+$data = json_decode(file_get_contents("php://input"), true);
+
+if (!$data) {
+    $data = $_POST;
 }
 
-// GET USER
+$email = $data['email'] ?? '';
+$password = $data['password'] ?? '';
+
+// validation
+if (!$email || !$password) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "No data received"
+    ]);
+    exit;
+}
+
+// FIX: check DB connection exists
+if (!isset($conn)) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "DB not connected"
+    ]);
+    exit;
+}
+
+// query
 $sql = "SELECT * FROM users WHERE email='$email'";
 $result = $conn->query($sql);
 
@@ -20,7 +47,7 @@ if ($result && $result->num_rows > 0) {
 
         echo json_encode([
             "status" => "success",
-            "message" => "Login Successful",
+            "message" => "Login successful",
             "user" => $user
         ]);
 
@@ -28,7 +55,7 @@ if ($result && $result->num_rows > 0) {
 
         echo json_encode([
             "status" => "error",
-            "message" => "Wrong Password"
+            "message" => "Wrong password"
         ]);
     }
 
@@ -36,7 +63,8 @@ if ($result && $result->num_rows > 0) {
 
     echo json_encode([
         "status" => "error",
-        "message" => "User Not Found"
+        "message" => "User not found"
     ]);
 }
+
 ?>

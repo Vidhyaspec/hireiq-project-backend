@@ -1,26 +1,19 @@
 <?php
 
-// Detect if running on localhost
-$isLocal = (
-    $_SERVER['HTTP_HOST'] === 'localhost' ||
-    $_SERVER['HTTP_HOST'] === '127.0.0.1'
-);
+$isLocal = ($_SERVER['HTTP_HOST'] === 'localhost');
 
 if ($isLocal) {
-    // LOCAL XAMPP DATABASE
-    $host = "localhost";
-    $user = "root";
-    $password = "";
-    $database = "hireiq";
+    // LOCALHOST
+    $conn = new mysqli("localhost", "root", "", "hireiq");
 } else {
-    // PRODUCTION (Render → InfinityFree DB)
-    $host = "sql112.infinityfree.com";
-    $user = "if0_42125722";
-    $password = "VidhyaMahi";
-    $database = "if0_42125722_hireiq";
+    // LIVE SERVER (Render)
+    $conn = new mysqli(
+        "sql112.infinityfree.com",
+        "if0_42125722",
+        "VidhyaMahi",
+        "if0_42125722_hireiq"
+    );
 }
-
-$conn = new mysqli($host, $user, $password, $database);
 
 if ($conn->connect_error) {
     die(json_encode([
