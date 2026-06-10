@@ -1,16 +1,17 @@
 <?php
 
-$conn = new mysqli(
-    getenv("DB_HOST"),
-    getenv("DB_USER"),
-    getenv("DB_PASS"),
-    getenv("DB_NAME")
-);
+$host = getenv("DB_HOST") ?: "127.0.0.1";
+$user = getenv("DB_USER") ?: "root";
+$pass = getenv("DB_PASS") ?: "";
+$name = getenv("DB_NAME") ?: "hireiq";
+$port = getenv("DB_PORT") ?: 3306;
+
+$conn = new mysqli($host, $user, $pass, $name, $port);
 
 if ($conn->connect_error) {
     die(json_encode([
         "status" => "error",
-        "message" => "DB connection failed"
+        "message" => "DB connection failed: " . $conn->connect_error
     ]));
 }
 

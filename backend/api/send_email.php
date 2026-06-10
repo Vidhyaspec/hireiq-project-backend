@@ -15,17 +15,18 @@ function sendMail($to, $name, $subject, $body)
     try {
 
         // =========================
-        // SMTP CONFIG (GMAIL)
+        // SMTP CONFIG
         // =========================
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
+        $mail->Host = getenv("SMTP_HOST") ?: 'smtp.gmail.com';
         $mail->SMTPAuth = true;
 
-        $mail->Username = 'vidhyasri0615@gmail.com';
-        $mail->Password = 'fazxokkcoqwwbanu'; // APP PASSWORD (NO SPACES)
+        $mail->Username = getenv("SMTP_USER") ?: 'vidhyasri0615@gmail.com';
+        $mail->Password = getenv("SMTP_PASS") ?: 'fazxokkcoqwwbanu'; // APP PASSWORD (NO SPACES)
 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $secureMode = getenv("SMTP_SECURE") ?: 'tls';
+        $mail->SMTPSecure = ($secureMode === 'ssl') ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = getenv("SMTP_PORT") ?: 587;
 
         // =========================
         // 🔥 IMPORTANT DEBUG (TURN ON FOR TESTING)
@@ -38,7 +39,7 @@ function sendMail($to, $name, $subject, $body)
         // =========================
         // EMAIL SETTINGS
         // =========================
-        $mail->setFrom('vidhyasri0615@gmail.com', 'HIREIQ');
+        $mail->setFrom(getenv("SMTP_FROM_EMAIL") ?: 'vidhyasri0615@gmail.com', getenv("SMTP_FROM_NAME") ?: 'HIREIQ');
         $mail->addAddress($to, $name);
 
         $mail->isHTML(true);
