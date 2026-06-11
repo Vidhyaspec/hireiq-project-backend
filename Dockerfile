@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 # Install mysqli PHP extension
 RUN docker-php-ext-install mysqli
 
-# Explicitly disable conflicting MPM modules and enable prefork MPM (required for PHP)
+# Disable conflicting MPM modules at build time
 RUN a2dismod mpm_event mpm_worker || true
 RUN a2enmod mpm_prefork || true
 
@@ -28,6 +28,6 @@ RUN composer install --no-dev --optimize-autoloader
 # Restore default workdir
 WORKDIR /var/www/html
 
-# Dynamically replace Apache port with $PORT (provided by Railway) at container startup
+# Enforce disabling conflicting MPMs and apply port binding dynamically at container boot
 ENV PORT=80
-CMD ["sh", "-c", "sed -i \"s/Listen 80/Listen $PORT/g\" /etc/apache2/ports.conf && sed -i \"s/<VirtualHost \\*\\:80>/<VirtualHost *:$PORT>/g\" /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
+CMD ["sh", "-c", "a2dismod mpm_event mpm_worker || true && a2enmod mpm_prefork || true && sed -i \"s/Listen 80/Listen $PORT/g\" /etc/apache2/ports.conf && sed -i \"s/<VirtualHost \\*\\:80>/<VirtualHost *:$PORT>/g\" /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
